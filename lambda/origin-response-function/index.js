@@ -3,7 +3,7 @@
 const querystring = require('querystring');
 const aws = require('aws-sdk');
 const s3 = new aws.S3({
-  region: 'YOUR_REGION',
+  region: process.env.REGION,
   signatureVersion: 'v4'
 });
 const sharp = require('sharp');
@@ -15,7 +15,7 @@ exports.handler = async (event, context, callback) => {
   const { config, request, response } = event.Records[0].cf;
 
   // select origin bucket
-  const bucket = 'YOUR_BUCKET';
+  const bucket = process.env.ORIGIN_BUCKET;
 
   // check if image is present and not cached.
   if (response.status == 200) {
@@ -34,7 +34,7 @@ exports.handler = async (event, context, callback) => {
     // parse the width, height, type, quality, format, image name
     let width, height, type, quality, requiredFormat;
 
-    // s=100x100&t=enlargement&q=100(&f=webp)
+    // s=100x100&t=crop&q=100(&f=webp)
     const sizeMatch = params.s.split('x');
     const typeMatch = params.t;
     const qualityMatch = params.q;
